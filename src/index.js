@@ -18,25 +18,29 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.log('NODE', node)
       const { data, links } = node.value.toJSON()
       console.log('LINKS', links)
+      let html = ''
       for await (const fileUrl of loadFiles(links)) {
         console.log('FILE URL', fileUrl)
         const { name, url } = fileUrl
-        document.body.innerHTML += `
+        html += `
           ${name} <audio src="${url}" controls="true"></audio><br />
         `
       }
+      document.body.innerHTML += html
     }
 
     async function * loadFiles (links) {
       while (links.length) {
-        const { cid, name, size } = links.pop()
-        const url = await loadFile(cid, name)
-        const fileUrl = { name, url }
-        yield fileUrl
+        const link = links.pop()
+        console.log('LINK', link)
+        const { cid, name, size } = link
+        const { type, url } = await loadData(cid, name)
+        const item = { name, cid, size, type, url }
+        yield item
       }
     }
 
-    async function loadFile (cid, name) {
+    async function loadData (cid, name) {
       try {
         const stream = await ipfs.cat(cid)
         const chunks = []
@@ -45,9 +49,22 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         const blob = new Blob(chunks)
-        return URL.createObjectURL(blob)
+        const url = URL.createObjectURL(blob)
+        return {
+          url,
+          type: 'file'
+        }
       } catch (error) {
-        console.log(`ERROR loading file: ${name} / ${cid}`, error)
+        // Generic error.
+        if (!error.toString().match('is a directory')) {
+          console.log(`ERROR loading file: ${name} / ${cid}`, error)
+          return
+        }
+
+        // Return directory.
+        return {
+          type: 'directory'
+        }
       }
     }
   }
