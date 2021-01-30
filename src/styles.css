@@ -233,10 +233,48 @@ body {
 }
 
 .show {
-  opacity: 1;
 }
 
 .hide {
-  opacity: 0;
-  transition: opacity 400ms;
+  display: none;
+}
+
+.file {
+  background: #444;
+  color: white;
+  display: grid;
+  grid-template-columns: 50% 10% 40%;
+  border-bottom: 1px solid #222;
+  padding-left: 10px;
+  cursor: default;
+}
+
+.file.alt {
+  background: #555;
+}
+
+.file span {
+  display: flex;
+  align-items: center;
+}
+
+.dir {
+  background: #447270;
+  color: white;
+  display: flex;
+  border-bottom: 1px solid #222;
+  height: 55px;
+  cursor: pointer;
+  padding-left: 10px;
+}
+
+.dir span {
+  display: flex;
+  align-items: center;
+}
+
+.right {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 10px;
 }

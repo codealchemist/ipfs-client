@@ -1,11 +1,13 @@
 import IPFS from 'ipfs'
 import keys from '/util/keys'
+import renderFile from '/components/file'
+import renderDir from '/components/dir'
 
 const hash = 'QmdtfpaENoJYEyjH3x3drcTHsfJZoDSo5rAuMCTKjbAhvY'
 
 document.addEventListener('DOMContentLoaded', init)
 
-async function init() {
+async function init () {
   const ipfs = await IPFS.create()
   const $input = document.getElementById('cid')
   const $inputContainer = document.getElementById('input-container')
@@ -41,11 +43,13 @@ async function init() {
     const { data, links } = node.value.toJSON()
     // console.log('LINKS', links)
     for await (const fileUrl of loadFiles(links)) {
-      // console.log('FILE URL', fileUrl)
-      const { name, url } = fileUrl
-      $content.innerHTML += `
-        ${name} <audio src="${url}" controls="true"></audio><br />
-      `
+      if (fileUrl.url) {
+        // File.
+        $content.innerHTML += renderFile(fileUrl)
+      } else {
+        // Dir.
+        $content.innerHTML += renderDir(fileUrl)
+      }
     }
   }
 
