@@ -2,7 +2,7 @@ import prettyBytes from 'pretty-bytes'
 
 let altRow = false
 function file (file) {
-  console.log('File component:', file)
+  // console.log('File component:', file)
   const { name, url, size } = file
   const html = `
     <div class="file${altRow ? ' alt' : ''}">

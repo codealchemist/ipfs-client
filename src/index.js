@@ -12,6 +12,8 @@ async function init () {
   const $input = document.getElementById('cid')
   const $inputContainer = document.getElementById('input-container')
   const $content = document.getElementById('content')
+  const $loading = document.getElementById('loading')
+  const cache = {}
   console.log('NODE READY')
 
   keys('#cid', 'Enter', () => {
@@ -26,22 +28,78 @@ async function init () {
   })
 
   keys('body', 'Escape', () => {
+    resetView()
+  })
+
+  function resetView () {
     $content.innerHTML = '' // Clear content.
     $content.classList.add('hide')
     $content.classList.remove('show')
     $inputContainer.classList.add('show')
     $inputContainer.classList.remove('hide')
+  }
+
+  $content.addEventListener('click', event => {
+    const { target } = event
+    const { className } = target
+    if (!className || className != 'dir') return
+    console.log('LOAD DIR', target.dataset)
+    const { cid } = target.dataset
+
+    $content.innerHTML = '' // Clear content.
+    load(cid)
   })
+
+  window.onpopstate = event => {
+    console.log('HISTORY BACK', event)
+    const { state } = event
+    const content = state?.content || ''
+    $content.innerHTML = content
+
+    if (!content) resetView()
+  }
+
+  function setLoading (percentage) {
+    $loading.style.width = `${percentage}vw`
+  }
+
+  function showLoading () {
+    $loading.style.opacity = '1'
+  }
+
+  function hideLoading () {
+    $loading.style.opacity = '0'
+    setTimeout(() => {
+      $loading.style.width = '0vw'
+    }, 500)
+  }
+
+  function loadFromCache (hash) {
+    const content = cache[hash]
+    $content.innerHTML = content
+    setHistory(hash)
+  }
+
+  function setHistory (hash) {
+    window.history.pushState({ content: $content.innerHTML }, null, hash)
+  }
 
   async function load (hash) {
     // const id = await ipfs.id()
     // console.log('IPFS NODE created:', id)
+    if (cache[hash]) {
+      loadFromCache(hash)
+      return
+    }
 
     console.log(`Loading ${hash}...`)
     const node = await ipfs.dag.get(hash)
     // console.log('NODE', node)
     const { data, links } = node.value.toJSON()
     // console.log('LINKS', links)
+    const total = links.length
+    let loadedItems = 0
+    showLoading()
     for await (const fileUrl of loadFiles(links)) {
       if (fileUrl.url) {
         // File.
@@ -50,7 +108,14 @@ async function init () {
         // Dir.
         $content.innerHTML += renderDir(fileUrl)
       }
+      loadedItems += 1
+
+      const percentage = Math.round((loadedItems * 100) / total)
+      setLoading(percentage)
     }
+    hideLoading()
+    cache[hash] = $content.innerHTML
+    setHistory(hash)
   }
 
   async function * loadFiles (links) {
