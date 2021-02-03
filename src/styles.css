@@ -20,7 +20,7 @@ a:hover {
 body {
   background: #222;
   overflow: hidden;
-  color: #224480;
+  color: #149bcc;
   margin: 0;
   padding: 0;
   font-family: 'Montserrat', sans-serif;
@@ -34,6 +34,18 @@ body {
   top: 0;
   left: 0;
   transition: all 500ms;
+}
+
+#title {
+  font-size: 15vh;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  width: 100vw;
+  height: calc(100vh - 200px);
+  align-items: center;
+  color: #149bcc;
+  z-index: -1;
 }
 
 .abs-center {
@@ -123,4 +135,10 @@ body {
   display: flex;
   justify-content: flex-end;
   padding-right: 10px;
+}
+
+@media (orientation: portrait) {
+  #title {
+    font-size: 15vw;
+  }
 }
