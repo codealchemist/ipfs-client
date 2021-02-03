@@ -57,23 +57,6 @@ body {
   margin: auto;
 }
 
-.abs-bottom {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
-}
-
-.abs-bottom-right {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  margin: auto;
-  right: 20px;
-  left: auto;
-}
-
 .rounded {
   border-radius: 5px;
 }

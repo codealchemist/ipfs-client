@@ -51,11 +51,9 @@ async function init () {
   })
 
   window.onpopstate = event => {
-    console.log('HISTORY BACK', event)
     const { state } = event
     const content = state?.content || ''
     $content.innerHTML = content
-
     if (!content) resetView()
   }
 
