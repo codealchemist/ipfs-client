@@ -14,7 +14,9 @@ function file (file) {
     </div>
   `
   altRow = !altRow
-  return html
+  const div = document.createElement('div')
+  div.innerHTML = html
+  return div
 }
 
 export default file

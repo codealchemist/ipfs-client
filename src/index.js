@@ -1,7 +1,7 @@
 import IPFS from 'ipfs'
 import keys from '/util/keys'
-import renderFile from '/components/file'
-import renderDir from '/components/dir'
+import getFileElement from '/components/file'
+import getDirElement from '/components/dir'
 
 const hash = 'QmdtfpaENoJYEyjH3x3drcTHsfJZoDSo5rAuMCTKjbAhvY'
 
@@ -98,14 +98,16 @@ async function init () {
     const total = links.length
     let loadedItems = 0
     showLoading()
-    for await (const fileUrl of loadFiles(links)) {
-      if (fileUrl.url) {
+    for await (const fileObj of loadFiles(links)) {
+      let item
+      if (fileObj.url) {
         // File.
-        $content.innerHTML += renderFile(fileUrl)
+        item = getFileElement(fileObj)
       } else {
         // Dir.
-        $content.innerHTML += renderDir(fileUrl)
+        item = getDirElement(fileObj)
       }
+      $content.appendChild(item)
       loadedItems += 1
 
       const percentage = Math.round((loadedItems * 100) / total)

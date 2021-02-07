@@ -6,7 +6,9 @@ function dir (dir) {
       <span>${name}</span>
     </div>
   `
-  return html
+  const div = document.createElement('div')
+  div.innerHTML = html
+  return div
 }
 
 export default dir
