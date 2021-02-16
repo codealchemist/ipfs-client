@@ -1,7 +1,7 @@
 const fileExtMap = {
   audio: /(mp3|ogg|wav|flac)$/i,
-  video: /(mp4|webm|avi|ogv|)$/i,
-  text: /(txt|md)$/i
+  video: /(mp4|webm|avi|ogv)$/i,
+  text: /(txt|md|html|htm|xml|js|css|scss|yml|yaml|json|php|perl|py|sh)$/i
 }
 const types = Object.keys(fileExtMap)
 

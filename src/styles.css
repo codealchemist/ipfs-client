@@ -11,10 +11,25 @@
 a {
   color: #149bcc;
   text-decoration: none;
+  cursor: pointer;
 }
 
 a:hover {
   opacity: 0.7;
+}
+
+.file a {
+  background: #222;
+  color: #ddd;
+  padding: 5px 10px;
+  border-radius: 15px;
+}
+
+.file a:hover {
+  opacity: 1;
+  background: #149bcc;
+  color: black;
+  transition: all 0.3s;
 }
 
 body {
@@ -24,6 +39,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Montserrat', sans-serif;
+  font-size: 1em;
 }
 
 #loading {
@@ -121,8 +137,23 @@ body {
   padding-right: 10px;
 }
 
+.truncate {
+  display: inline-block !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin: auto 0;
+}
+
 @media (orientation: portrait) {
   #title {
     font-size: 15vw;
+  }
+}
+
+/* Wide screens. TODO. */
+@media (min-width:500px){
+  body {
+    font-size: 1em;
   }
 }

@@ -9,6 +9,7 @@ const contentMap = {
 
 function getContent (file) {
   const type = getFileType(file.name)
+  console.log('TYPE:', type)
   const content = contentMap[type] ? contentMap[type](file) : ''
   return content
 }

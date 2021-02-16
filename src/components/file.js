@@ -7,7 +7,7 @@ function file (file) {
   const { name, url, size } = file
   const content = getContent(file)
   const html = `
-    <span>${name}</span>
+    <span class="truncate">${name}</span>
     <span>${prettyBytes(size)}</span>
     ${content}
   `

@@ -1,5 +1,5 @@
 export default ({ name, url, size }) => `
 <span class="right">
-  <button onclick="window.open(${url})">Open</button>
+  <a onclick="window.open('${url}')">Open</a>
 </span>
 `
