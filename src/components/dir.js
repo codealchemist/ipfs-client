@@ -2,7 +2,7 @@ function dir (dir) {
   // console.log('Dir component:', dir)
   const { name, cid } = dir
   const html = `
-    <div class="dir" data-cid="${cid}">
+    <div class="dir" data-cid="${cid}" title="${name}">
       <span>${name}</span>
     </div>
   `

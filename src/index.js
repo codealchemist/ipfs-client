@@ -2,6 +2,7 @@ import IPFS from 'ipfs'
 import keys from '/util/keys'
 import getFileElement from '/components/file'
 import getDirElement from '/components/dir'
+import mime from 'mime-types'
 
 const hash = 'QmdtfpaENoJYEyjH3x3drcTHsfJZoDSo5rAuMCTKjbAhvY'
 
@@ -11,8 +12,13 @@ async function init () {
   const ipfs = await IPFS.create()
   const $input = document.getElementById('cid')
   const $inputContainer = document.getElementById('input-container')
+  const $container = document.getElementById('container')
   const $content = document.getElementById('content')
+  const $iframe = document.getElementById('inline-content')
   const $loading = document.getElementById('loading')
+  let hiddenLoadingText = true
+  let loadingTextTimer
+  const inlineContentStartWidth = 1024 // Start displaying inline content at 800px
   const cache = {}
   console.log('NODE READY')
 
@@ -31,7 +37,37 @@ async function init () {
     resetView()
   })
 
+  $content.addEventListener('click', event => {
+    const { target } = event
+    if (!target.classList.contains('open')) return
+
+    const { url } = target.dataset
+
+    // Open in new window.
+    if (window.innerWidth < inlineContentStartWidth) {
+      window.open(url)
+      return
+    }
+
+    // Display inline content.
+    $iframe.onload = () => {
+      const $iframeBody = $iframe.contentWindow.document.querySelector('body')
+      $iframeBody.style.color = '#ddd'
+    }
+    $iframe.src = url
+    showInlineContent()
+  })
+
+  function showInlineContent () {
+    $container.classList.add('inline-content')
+  }
+
+  function hideInlineContent () {
+    $container.classList.remove('inline-content')
+  }
+
   function resetView () {
+    hideInlineContent()
     $content.innerHTML = '' // Clear content.
     $content.classList.add('hide')
     $content.classList.remove('show')
@@ -62,6 +98,10 @@ async function init () {
   }
 
   function showLoading () {
+    loadingTextTimer = setTimeout(() => {
+      hiddenLoadingText = false
+      $loading.classList.add('init')
+    }, 1000)
     $loading.style.opacity = '1'
   }
 
@@ -112,6 +152,12 @@ async function init () {
 
       const percentage = Math.round((loadedItems * 100) / total)
       setLoading(percentage)
+
+      // Hide loading text.
+      if (!hiddenLoadingText) {
+        clearTimeout(loadingTextTimer)
+        $loading.classList.remove('init')
+      }
     }
     hideLoading()
     cache[hash] = $content.innerHTML
@@ -137,7 +183,8 @@ async function init () {
         chunks.push(chunk)
       }
 
-      const blob = new Blob(chunks)
+      const mimeType = mime.lookup(name)
+      const blob = new Blob(chunks, { type: mimeType })
       const url = URL.createObjectURL(blob)
       return {
         url,
