@@ -45,6 +45,8 @@ async function init () {
     if (!path) return
 
     path.some($el => {
+      if ($el.nodeName == 'A') return true
+
       // Load file.
       if ($el.classList.contains('file')) {
         const { dataset } = $el
