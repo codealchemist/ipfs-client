@@ -18,6 +18,10 @@ function file (file) {
   div.setAttribute('data-name', name)
   div.setAttribute('data-size', size)
   div.className = `file${altRow ? ' alt' : ''}`
+  div.onclick = function () {
+    const event = new CustomEvent('file-click', { detail: this.dataset })
+    document.dispatchEvent(event)
+  }
   div.innerHTML = html
   return div
 }

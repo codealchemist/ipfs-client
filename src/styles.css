@@ -66,15 +66,16 @@ iframe {
 .file a {
   background: #222;
   color: #ddd;
-  padding: 5px 10px;
-  border-radius: 15px;
+  padding: 5px 5px 5px 10px;
+  border-radius: 20px;
+  border: 1px solid transparent;
 }
 
 .file a:hover {
   opacity: 1;
-  background: #149bcc;
-  color: black;
   transition: all 0.3s;
+  border: 1px solid #91e695;
+  background: black;
 }
 
 #loading {
@@ -195,6 +196,12 @@ iframe {
 @media (orientation: portrait) {
   #title {
     font-size: 15vw;
+  }
+}
+
+@media (max-width: 1024px) {
+  .file a {
+    display: none;
   }
 }
 

@@ -41,10 +41,15 @@ async function init () {
     const { target } = event
     if (!target.classList.contains('open')) return
 
-    const { url } = target.dataset
+    const { url, name, size } = target.dataset
+    openContent({ url, name, size })
+  })
 
+  function openContent ({ url, name, size }) {
+    console.log('Open content', window.innerWidth, inlineContentStartWidth)
     // Open in new window.
     if (window.innerWidth < inlineContentStartWidth) {
+      console.log('Open URL in new window')
       window.open(url)
       return
     }
@@ -56,7 +61,7 @@ async function init () {
     }
     $iframe.src = url
     showInlineContent()
-  })
+  }
 
   function showInlineContent () {
     $container.classList.add('inline-content')
@@ -75,13 +80,17 @@ async function init () {
     $inputContainer.classList.remove('hide')
   }
 
-  $content.addEventListener('click', event => {
-    const { target } = event
-    const { className } = target
-    if (!className || className != 'dir') return
-    console.log('LOAD DIR', target.dataset)
-    const { cid } = target.dataset
+  // Open file.
+  document.addEventListener('file-click', ({ detail }) => {
+    console.log('Open file', detail)
+    const { url, name, size } = detail
+    openContent({ url, name, size })
+  })
 
+  // Open dir.
+  document.addEventListener('dir-click', ({ detail }) => {
+    console.log('Open dir', detail)
+    const { cid } = detail
     $content.innerHTML = '' // Clear content.
     load(cid)
   })

@@ -1,5 +1,5 @@
 export default ({ name, url, size }) => `
 <span class="right">
-  <a class="open any" data-url="${url}">Open</a>
+  <a class="image" href="${url}" target="_blank">🔗</a>
 </span>
 `
