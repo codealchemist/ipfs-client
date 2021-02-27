@@ -201,6 +201,10 @@ iframe {
 }
 
 @media (max-width: 1024px) {
+  .file {
+    grid-template-columns: 80% 20%;
+  }
+
   .file a {
     display: none;
   }
