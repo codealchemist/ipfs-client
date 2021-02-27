@@ -8,7 +8,7 @@ function file (file) {
   const content = getContent(file)
   const html = `
     <span class="truncate">${name}</span>
-    <span>${prettyBytes(size)}</span>
+    <span class="right">${prettyBytes(size)}</span>
     ${content}
   `
   altRow = !altRow

@@ -147,7 +147,7 @@ iframe {
   background: #444;
   color: white;
   display: grid;
-  grid-template-columns: 50% 10% 40%;
+  grid-template-columns: 70% 20% 10%;
   border-bottom: 1px solid #222;
   padding-left: 10px;
   cursor: pointer;
@@ -209,15 +209,3 @@ iframe {
     display: none;
   }
 }
-
-/* Wide screens. TODO 1650. */
-/* @media (min-width: 1024px) {
-  #container {
-    display: grid;
-    grid-template-columns: 30% 70%;
-  }
-
-  iframe {
-    display: block;
-  }
-} */
