@@ -5,6 +5,7 @@ import getDirElement from '/components/dir'
 import mime from 'mime-types'
 
 const hash = 'QmdtfpaENoJYEyjH3x3drcTHsfJZoDSo5rAuMCTKjbAhvY'
+let loadingHash
 
 document.addEventListener('DOMContentLoaded', init)
 
@@ -20,6 +21,7 @@ async function init () {
   let loadingTextTimer
   const inlineContentStartWidth = 1024 // Start displaying inline content at 800px
   const cache = {}
+  let isLoading = false
   console.log('NODE READY')
 
   keys('#cid', 'Enter', () => {
@@ -37,13 +39,74 @@ async function init () {
     resetView()
   })
 
-  $content.addEventListener('click', event => {
-    const { target } = event
-    if (!target.classList.contains('open')) return
+  $container.addEventListener('click', event => {
+    console.log('-- CLICK', event)
+    const { path } = event
+    if (!path) return
 
-    const { url, name, size } = target.dataset
+    path.some($el => {
+      // Load file.
+      if ($el.classList.contains('file')) {
+        const { dataset } = $el
+        event.stopPropagation()
+        event.preventDefault()
+        openFile(dataset)
+        return true
+      }
+
+      // Load dir.
+      if ($el.classList.contains('dir')) {
+        const { dataset } = $el
+        openDir(dataset)
+        event.stopPropagation()
+        event.preventDefault()
+        return true
+      }
+    })
+  })
+
+  // Open file.
+  document.addEventListener('file-click', ({ detail }) => {
+    console.log('Open file', detail)
+    const { url, name, size } = detail
     openContent({ url, name, size })
   })
+
+  // Open dir.
+  document.addEventListener('dir-click', ({ detail }) => {
+    console.log('Open dir', detail)
+    const { cid } = detail
+    $content.innerHTML = '' // Clear content.
+    load(cid)
+  })
+
+  // History navigation.
+  window.onpopstate = event => {
+    const { state } = event
+    const { content, hash, partial } = state || {}
+    if (partial) {
+      console.log(`RESUME ${hash}`)
+      $content.innerHTML = '' // Clear content.
+      load(hash)
+      return
+    }
+
+    $content.innerHTML = content
+    if (!content) resetView()
+  }
+
+  function openFile (data) {
+    console.log('Open file', data)
+    const { url, name, size } = data
+    openContent({ url, name, size })
+  }
+
+  function openDir (data) {
+    console.log('Open dir', data)
+    const { cid } = data
+    $content.innerHTML = '' // Clear content.
+    load(cid)
+  }
 
   function openContent ({ url, name, size }) {
     console.log('Open content', window.innerWidth, inlineContentStartWidth)
@@ -80,33 +143,12 @@ async function init () {
     $inputContainer.classList.remove('hide')
   }
 
-  // Open file.
-  document.addEventListener('file-click', ({ detail }) => {
-    console.log('Open file', detail)
-    const { url, name, size } = detail
-    openContent({ url, name, size })
-  })
-
-  // Open dir.
-  document.addEventListener('dir-click', ({ detail }) => {
-    console.log('Open dir', detail)
-    const { cid } = detail
-    $content.innerHTML = '' // Clear content.
-    load(cid)
-  })
-
-  window.onpopstate = event => {
-    const { state } = event
-    const content = state?.content || ''
-    $content.innerHTML = content
-    if (!content) resetView()
-  }
-
   function setLoading (percentage) {
     $loading.style.width = `${percentage}vw`
   }
 
   function showLoading () {
+    isLoading = true
     loadingTextTimer = setTimeout(() => {
       hiddenLoadingText = false
       $loading.classList.add('init')
@@ -115,6 +157,7 @@ async function init () {
   }
 
   function hideLoading () {
+    isLoading = false
     $loading.style.opacity = '0'
     setTimeout(() => {
       $loading.style.width = '0vw'
@@ -127,11 +170,17 @@ async function init () {
     setHistory(hash)
   }
 
-  function setHistory (hash) {
-    window.history.pushState({ content: $content.innerHTML }, null, hash)
+  function setHistory (hash, partial = false) {
+    window.history.pushState(
+      { content: $content.innerHTML, partial, hash },
+      null,
+      hash
+    )
   }
 
   async function load (hash) {
+    if (isLoading) hideLoading()
+    loadingHash = hash
     // const id = await ipfs.id()
     // console.log('IPFS NODE created:', id)
     if (cache[hash]) {
@@ -147,7 +196,13 @@ async function init () {
     const total = links.length
     let loadedItems = 0
     showLoading()
-    for await (const fileObj of loadFiles(links)) {
+    for await (const fileObj of loadItems(links)) {
+      if (loadingHash != hash) {
+        setHistory(hash, true)
+        console.log(`CANCEL loading ${hash}`)
+        return
+      }
+
       let item
       if (fileObj.url) {
         // File.
@@ -173,7 +228,8 @@ async function init () {
     setHistory(hash)
   }
 
-  async function * loadFiles (links) {
+  // Load files and dirs.
+  async function * loadItems (links) {
     while (links.length) {
       const link = links.pop()
       // console.log('LINK', link)
