@@ -4,9 +4,6 @@ import getFileElement from '/components/file'
 import getDirElement from '/components/dir'
 import mime from 'mime-types'
 
-const hash = 'QmdtfpaENoJYEyjH3x3drcTHsfJZoDSo5rAuMCTKjbAhvY'
-let loadingHash
-
 document.addEventListener('DOMContentLoaded', init)
 
 async function init () {
@@ -22,6 +19,7 @@ async function init () {
   const inlineContentStartWidth = 1024 // Start displaying inline content at 800px
   const cache = {}
   let isLoading = false
+  let loadingHash
   console.log('NODE READY')
 
   keys('#cid', 'Enter', () => {
@@ -269,5 +267,12 @@ async function init () {
         type: 'directory'
       }
     }
+  }
+
+  // Read hash from URL.
+  const hash = window.location.pathname.replace('/', '')
+  if (hash) {
+    console.log(`Auto loading hash: ${hash}`)
+    load(hash)
   }
 }
