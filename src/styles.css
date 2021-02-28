@@ -194,6 +194,28 @@ iframe {
   margin: auto 0;
 }
 
+.center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+.name {
+  display: grid;
+}
+
+.with-content {
+  grid-template-columns: 50% 50%;
+}
+
 @media (orientation: portrait) {
   #title {
     font-size: 15vw;
@@ -203,6 +225,10 @@ iframe {
 @media (max-width: 1024px) {
   .file {
     grid-template-columns: 80% 20%;
+  }
+
+  .actions {
+    display: none !important;
   }
 
   .file a {

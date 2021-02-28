@@ -25,11 +25,7 @@ async function init () {
   keys('#cid', 'Enter', () => {
     const cid = $input.value
     if (!cid) return
-
-    $content.classList.add('show')
-    $content.classList.remove('hide')
-    $inputContainer.classList.add('hide')
-    $inputContainer.classList.remove('show')
+    showContentView()
     load(cid)
   })
 
@@ -132,6 +128,13 @@ async function init () {
 
   function hideInlineContent () {
     $container.classList.remove('inline-content')
+  }
+
+  function showContentView () {
+    $content.classList.add('show')
+    $content.classList.remove('hide')
+    $inputContainer.classList.add('hide')
+    $inputContainer.classList.remove('show')
   }
 
   function resetView () {
@@ -273,6 +276,7 @@ async function init () {
   const hash = window.location.pathname.replace('/', '')
   if (hash) {
     console.log(`Auto loading hash: ${hash}`)
+    showContentView()
     load(hash)
   }
 }

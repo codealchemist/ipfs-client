@@ -6,10 +6,16 @@ function file (file) {
   // console.log('File component:', file)
   const { name, url, size } = file
   const content = getContent(file)
+
   const html = `
-    <span class="truncate">${name}</span>
+    <div class="name ${content ? 'with-content' : ''}">
+      <span class="left truncate">${name}</span>
+      ${content}
+    </div>
     <span class="right">${prettyBytes(size)}</span>
-    ${content}
+    <span class="right actions">
+      <a class="any" href="${url}" target="_blank">🔗</a>
+    </span>
   `
   altRow = !altRow
   const div = document.createElement('div')
